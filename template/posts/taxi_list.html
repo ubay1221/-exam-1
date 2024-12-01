@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Management</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Taxi Information</h1>
+
+    <div class="form-container">
+        <label for="taxiName">Taxi Name:</label>
+        <input type="text" id="taxiName" placeholder="Enter taxi name"><br><br>
+
+        <label for="licensePlate">License Plate:</label>
+        <input type="text" id="licensePlate" placeholder="Enter license plate"><br><br>
+
+        <label for="driverName">Driver Name:</label>
+        <input type="text" id="driverName" placeholder="Enter driver name"><br><br>
+
+        <label for="passengerCapacity">Passenger Capacity:</label>
+        <input type="number" id="passengerCapacity" placeholder="Enter passenger capacity"><br><br>
+
+        <label for="status">Status:</label>
+        <select id="status">
+            <option value="Not Done">Not Done</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Done">Done</option>
+        </select><br><br>
+
+        <button onclick="createTaxi()">Create Taxi</button>
+    </div>
+
+    <h2>Taxi Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Taxi Name</th>
+                <th>License Plate</th>
+                <th>Driver Name</th>
+                <th>Passenger Capacity</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="taxiTableBody">
+            <!-- New rows will be added here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to load saved data from localStorage
+        function loadTaxis() {
+            const taxis = JSON.parse(localStorage.getItem('taxis')) || [];
+            const tableBody = document.getElementById("taxiTableBody");
+            taxis.forEach(taxi => {
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${taxi.taxiName}</td>
+                    <td>${taxi.licensePlate}</td>
+                    <td>${taxi.driverName}</td>
+                    <td>${taxi.passengerCapacity}</td>
+                    <td>${taxi.status}</td>
+                `;
+                tableBody.appendChild(newRow);
+            });
+        }
+
+        // Function to create a new taxi entry and save it to localStorage
+        function createTaxi() {
+            const taxiName = document.getElementById("taxiName").value;
+            const licensePlate = document.getElementById("licensePlate").value;
+            const driverName = document.getElementById("driverName").value;
+            const passengerCapacity = document.getElementById("passengerCapacity").value;
+            const status = document.getElementById("status").value;
+
+            if (taxiName && licensePlate && driverName && passengerCapacity && status) {
+                const newTaxi = { taxiName, licensePlate, driverName, passengerCapacity, status };
+
+                // Save the new taxi to localStorage
+                let taxis = JSON.parse(localStorage.getItem('taxis')) || [];
+                taxis.push(newTaxi);
+                localStorage.setItem('taxis', JSON.stringify(taxis));
+
+                // Add the new taxi to the table
+                const tableBody = document.getElementById("taxiTableBody");
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${taxiName}</td>
+                    <td>${licensePlate}</td>
+                    <td>${driverName}</td>
+                    <td>${passengerCapacity}</td>
+                    <td>${status}</td>
+                `;
+                tableBody.appendChild(newRow);
+
+                // Clear input fields
+                document.getElementById("taxiName").value = "";
+                document.getElementById("licensePlate").value = "";
+                document.getElementById("driverName").value = "";
+                document.getElementById("passengerCapacity").value = "";
+                document.getElementById("status").value = "Not Done";
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        // Load saved taxis when the page loads
+        window.onload = loadTaxis;
+    </script>
+</body>
+</html>

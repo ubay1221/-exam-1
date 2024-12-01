@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dish Creation</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Dish</h1>
+
+    <div class="form-container">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter dish name"><br><br>
+
+        <label for="ingredients">Ingredients:</label>
+        <input type="text" id="ingredients" placeholder="Enter ingredients"><br><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" placeholder="Enter price"><br><br>
+
+        <label for="type">Type:</label>
+        <input type="text" id="type" placeholder="Enter dish type"><br><br>
+
+        <label for="cuisine">Cuisine:</label>
+        <input type="text" id="cuisine" placeholder="Enter cuisine"><br><br>
+
+        <button onclick="createDish()">Create Dish</button>
+    </div>
+
+    <h2>Dish Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Ingredients</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Cuisine</th>
+            </tr>
+        </thead>
+        <tbody id="dishTableBody">
+            <!-- New rows will be added here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to load saved data from localStorage
+        function loadDishes() {
+            const dishes = JSON.parse(localStorage.getItem('dishes')) || [];
+            const tableBody = document.getElementById("dishTableBody");
+            dishes.forEach(dish => {
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${dish.name}</td>
+                    <td>${dish.ingredients}</td>
+                    <td>${dish.price}</td>
+                    <td>${dish.type}</td>
+                    <td>${dish.cuisine}</td>
+                `;
+                tableBody.appendChild(newRow);
+            });
+        }
+
+        // Function to create a new dish entry and save it to localStorage
+        function createDish() {
+            const name = document.getElementById("name").value;
+            const ingredients = document.getElementById("ingredients").value;
+            const price = document.getElementById("price").value;
+            const type = document.getElementById("type").value;
+            const cuisine = document.getElementById("cuisine").value;
+
+            if (name && ingredients && price && type && cuisine) {
+                const newDish = { name, ingredients, price, type, cuisine };
+
+                // Save the new dish to localStorage
+                let dishes = JSON.parse(localStorage.getItem('dishes')) || [];
+                dishes.push(newDish);
+                localStorage.setItem('dishes', JSON.stringify(dishes));
+
+                // Add the new dish to the table
+                const tableBody = document.getElementById("dishTableBody");
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${name}</td>
+                    <td>${ingredients}</td>
+                    <td>${price}</td>
+                    <td>${type}</td>
+                    <td>${cuisine}</td>
+                `;
+                tableBody.appendChild(newRow);
+
+                // Clear input fields
+                document.getElementById("name").value = "";
+                document.getElementById("ingredients").value = "";
+                document.getElementById("price").value = "";
+                document.getElementById("type").value = "";
+                document.getElementById("cuisine").value = "";
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        // Load saved dishes when the page loads
+        window.onload = loadDishes;
+    </script>
+</body>
+</html>
